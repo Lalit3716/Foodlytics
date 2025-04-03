@@ -50,7 +50,11 @@ class HistoryService {
 
   Future<Product?> getProductFromHistory(String barcode) async {
     final history = await getHistory();
-    return history.firstWhere((p) => p.barcode == barcode);
+    try {
+      return history.firstWhere((p) => p.barcode == barcode);
+    } catch (e) {
+      return null;
+    }
   }
 
   Future<void> clearHistory() async {
