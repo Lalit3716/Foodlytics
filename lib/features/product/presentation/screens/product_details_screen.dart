@@ -48,6 +48,15 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   Future<void> _loadProduct() async {
     try {
+      final cachedProduct =
+          await _historyService!.getProductFromHistory(widget.barcode);
+      if (cachedProduct != null) {
+        setState(() {
+          _product = cachedProduct;
+          _isLoading = false;
+        });
+      }
+
       final product = await _productService.getProduct(widget.barcode);
       if (mounted) {
         setState(() {

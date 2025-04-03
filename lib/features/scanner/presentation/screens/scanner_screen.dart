@@ -104,11 +104,21 @@ class _ScannerScreenState extends State<ScannerScreen> {
             const SizedBox(height: 32),
             ElevatedButton.icon(
               onPressed: _isScanning ? null : _startScan,
-              icon:
-                  Icon(_isScanning ? Icons.camera_alt : Icons.qr_code_scanner),
+              icon: Icon(
+                _isScanning ? Icons.camera_alt : Icons.qr_code_scanner,
+                color: Colors.white,
+              ),
               label: Text(_isScanning ? 'Scanning...' : 'Start Scan'),
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 2,
+                backgroundColor: const Color(0xFF2196F3),
+                foregroundColor: Colors.white,
+                minimumSize: const Size(200, 56),
               ),
             ),
           ],

@@ -48,6 +48,11 @@ class HistoryService {
     await _prefs?.setString(_historyKey, historyJson);
   }
 
+  Future<Product?> getProductFromHistory(String barcode) async {
+    final history = await getHistory();
+    return history.firstWhere((p) => p.barcode == barcode);
+  }
+
   Future<void> clearHistory() async {
     await _prefs?.remove(_historyKey);
   }
