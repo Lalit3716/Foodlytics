@@ -65,6 +65,9 @@ dependencies:
   flutter_barcode_scanner: ^2.0.0
   permission_handler: ^11.3.0
 
+  # Authentication
+  http: ^1.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
