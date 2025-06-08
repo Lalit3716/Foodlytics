@@ -36,16 +36,17 @@ class _MainLayoutState extends State<MainLayout> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomAppBar(
+        height: 60,
         shape: const CircularNotchedRectangle(),
         notchMargin: 8,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _buildNavItem(0, Icons.home, 'Home'),
-            _buildNavItem(1, Icons.leaderboard, 'Leaderboard'),
-            const SizedBox(width: 48), // Space for FAB
-            _buildNavItem(2, Icons.chat, 'Chat'),
-            _buildNavItem(3, Icons.person, 'Profile'),
+            Expanded(child: _buildNavItem(0, Icons.home, 'Home')),
+            Expanded(child: _buildNavItem(1, Icons.leaderboard, 'Leaderboard')),
+            const Expanded(child: SizedBox()), // Space for FAB
+            Expanded(child: _buildNavItem(2, Icons.chat, 'Chat')),
+            Expanded(child: _buildNavItem(3, Icons.person, 'Profile')),
           ],
         ),
       ),
@@ -71,25 +72,23 @@ class _MainLayoutState extends State<MainLayout> {
             break;
         }
       },
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
+            size: 24,
+          ),
+          Text(
+            label,
+            style: TextStyle(
               color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
+              fontSize: 11,
             ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
-                fontSize: 12,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
