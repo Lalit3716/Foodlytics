@@ -10,6 +10,7 @@ import 'features/history/presentation/screens/history_screen.dart';
 import 'features/profile/presentation/screens/profile_screen.dart';
 import 'features/product/presentation/screens/product_details_screen.dart';
 import 'features/leaderboard/presentation/screens/leaderboard_screen.dart';
+import 'features/chatbot/presentation/screens/chatbot_screen.dart';
 import 'core/presentation/screens/main_layout.dart';
 
 void main() {
@@ -92,8 +93,18 @@ class MyApp extends StatelessWidget {
                 path: '/profile',
                 pageBuilder: (context, state) => NoTransitionPage(
                   child: MainLayout(
-                    currentIndex: 2,
+                    currentIndex: 3,
                     child: const ProfileScreen(),
+                  ),
+                ),
+              ),
+              
+              GoRoute(
+                path: '/chatbot',
+                pageBuilder: (context, state) => NoTransitionPage(
+                  child: MainLayout(
+                    currentIndex: 2,
+                    child: const ChatbotScreen(),
                   ),
                 ),
               ),
