@@ -34,6 +34,9 @@ class Product {
   @JsonKey(name: 'healthScore')
   final double healthScore;
 
+  @JsonKey(name: 'recommendations')
+  final Recommendations? recommendations;
+
   Product({
     required this.barcode,
     required this.name,
@@ -45,6 +48,7 @@ class Product {
     required this.servingSize,
     required this.servingUnit,
     required this.healthScore,
+    this.recommendations,
   });
 
   // For regular JSON serialization (used by HistoryService)
@@ -200,4 +204,56 @@ class NutritionInfo {
   factory NutritionInfo.fromJson(Map<String, dynamic> json) =>
       _$NutritionInfoFromJson(json);
   Map<String, dynamic> toJson() => _$NutritionInfoToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class Recommendations {
+  @JsonKey(name: 'recommendations')
+  final List<Recommendation> recommendations;
+
+  @JsonKey(name: 'generalAdvice')
+  final String generalAdvice;
+
+  Recommendations({
+    required this.recommendations,
+    required this.generalAdvice,
+  });
+
+  factory Recommendations.fromJson(Map<String, dynamic> json) =>
+      _$RecommendationsFromJson(json);
+  Map<String, dynamic> toJson() => _$RecommendationsToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class Recommendation {
+  @JsonKey(name: 'name')
+  final String name;
+
+  @JsonKey(name: 'imgUrl')
+  final String? imgUrl;
+
+  @JsonKey(name: 'barcode')
+  final String? barcode;
+
+  @JsonKey(name: 'reason')
+  final String reason;
+
+  @JsonKey(name: 'nutritionHighlights')
+  final List<String> nutritionHighlights;
+
+  @JsonKey(name: 'category')
+  final String category;
+
+  Recommendation({
+    required this.name,
+    this.imgUrl,
+    this.barcode,
+    required this.reason,
+    required this.nutritionHighlights,
+    required this.category,
+  });
+
+  factory Recommendation.fromJson(Map<String, dynamic> json) =>
+      _$RecommendationFromJson(json);
+  Map<String, dynamic> toJson() => _$RecommendationToJson(this);
 }
