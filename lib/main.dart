@@ -11,6 +11,7 @@ import 'features/profile/presentation/screens/profile_screen.dart';
 import 'features/product/presentation/screens/product_details_screen.dart';
 import 'features/leaderboard/presentation/screens/leaderboard_screen.dart';
 import 'features/chatbot/presentation/screens/chatbot_screen.dart';
+import 'features/analytics/presentation/screens/analytics_dashboard_screen.dart';
 import 'core/presentation/screens/main_layout.dart';
 
 void main() {
@@ -117,6 +118,10 @@ class MyApp extends StatelessWidget {
               GoRoute(
                 path: '/history',
                 builder: (context, state) => const HistoryScreen(),
+              ),
+              GoRoute(
+                path: '/analytics',
+                builder: (context, state) => const AnalyticsDashboardScreen(),
               ),
               GoRoute(
                 path: '/product/:barcode',
