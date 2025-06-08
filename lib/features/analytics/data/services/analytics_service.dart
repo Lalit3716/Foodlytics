@@ -9,7 +9,7 @@ class AnalyticsService {
 
   Future<String?> _getToken() async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('auth_token');
+    return prefs.getString('token');
   }
 
   Future<DashboardData> getDashboard() async {
@@ -96,4 +96,4 @@ class AnalyticsService {
       throw Exception('Failed to reset analytics');
     }
   }
-} 
+}
