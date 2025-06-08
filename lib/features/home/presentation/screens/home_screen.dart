@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:foodlytics/features/history/data/services/history_service.dart';
+import 'package:foodlytics/features/history/data/services/history_api_service.dart';
 import 'package:foodlytics/features/product/domain/models/product.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -14,51 +14,33 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Product> _recentScans = [];
   bool _isLoading = true;
   String? _error;
-  HistoryService? _historyService;
+  final HistoryApiService _historyService = HistoryApiService();
 
   @override
   void initState() {
     super.initState();
-    _initializeHistory();
-  }
-
-  Future<void> _initializeHistory() async {
-    try {
-      final service = await HistoryService.getInstance();
-      if (mounted) {
-        setState(() {
-          _historyService = service;
-        });
-        await _loadRecentScans();
-      }
-    } catch (e) {
-      print('Error initializing history service: $e');
-      if (mounted) {
-        setState(() {
-          _error = 'Failed to initialize history service';
-          _isLoading = false;
-        });
-      }
-    }
+    _loadRecentScans();
   }
 
   Future<void> _loadRecentScans() async {
-    if (_historyService == null) return;
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
 
     try {
-      final history = await _historyService!.getHistory();
+      final history = await _historyService.getHistory(limit: 5);
       if (mounted) {
         setState(() {
-          _recentScans = history.take(5).toList();
+          _recentScans = history;
           _isLoading = false;
-          _error = null;
         });
       }
     } catch (e) {
       print('Error loading recent scans: $e');
       if (mounted) {
         setState(() {
-          _error = 'Failed to load recent scans';
+          _error = e.toString().replaceAll('Exception: ', '');
           _isLoading = false;
         });
       }
@@ -145,6 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Text(
               _error!,
               style: Theme.of(context).textTheme.titleMedium,
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
             ElevatedButton(
@@ -158,12 +141,31 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (_recentScans.isEmpty) {
       return Center(
-        child: Text(
-          'No recent scans',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.grey[600],
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.history,
+              size: 64,
+              color: Colors.grey[400],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'No recent scans',
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.grey[600],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Scan a product to get started',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[500],
+              ),
+            ),
+          ],
         ),
       );
     }
@@ -173,6 +175,8 @@ class _HomeScreenState extends State<HomeScreen> {
       itemBuilder: (context, index) {
         final product = _recentScans[index];
         return Card(
+          elevation: 2,
+          margin: const EdgeInsets.symmetric(vertical: 6.0),
           child: ListTile(
             leading: product.imageUrl.isNotEmpty
                 ? ClipRRect(
@@ -182,19 +186,74 @@ class _HomeScreenState extends State<HomeScreen> {
                       width: 56,
                       height: 56,
                       fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const Icon(Icons.image_not_supported),
                     ),
                   )
                 : const Icon(Icons.image_not_supported),
-            title: Text(product.name),
-            subtitle: Text(product.brand),
-            trailing: Text(
-              '${product.nutritionInfo.calories.toStringAsFixed(0)} kcal',
-              style: Theme.of(context).textTheme.bodySmall,
+            title: Text(
+              product.name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            subtitle: Text(
+              product.brand,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            trailing: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                _buildHealthScoreIndicator(product.healthScore),
+                Text(
+                  '${product.nutritionInfo.calories.toStringAsFixed(0)} kcal',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ],
             ),
             onTap: () => context.go('/product/${product.barcode}'),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildHealthScoreIndicator(double score) {
+    Color color;
+    if (score >= 80) {
+      color = Colors.green;
+    } else if (score >= 60) {
+      color = Colors.orange;
+    } else {
+      color = Colors.red;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.favorite,
+            size: 10,
+            color: color,
+          ),
+          const SizedBox(width: 2),
+          Text(
+            score.toStringAsFixed(0),
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.bold,
+              fontSize: 10,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
