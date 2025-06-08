@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:foodlytics/features/history/data/services/history_service.dart';
+import 'package:foodlytics/features/history/data/services/history_api_service.dart';
 import 'package:foodlytics/features/product/domain/models/product.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -14,51 +14,33 @@ class _HistoryScreenState extends State<HistoryScreen> {
   List<Product> _history = [];
   bool _isLoading = true;
   String? _error;
-  HistoryService? _historyService;
+  final HistoryApiService _historyService = HistoryApiService();
 
   @override
   void initState() {
     super.initState();
-    _initializeHistory();
-  }
-
-  Future<void> _initializeHistory() async {
-    try {
-      final service = await HistoryService.getInstance();
-      if (mounted) {
-        setState(() {
-          _historyService = service;
-        });
-        await _loadHistory();
-      }
-    } catch (e) {
-      print('Error initializing history service: $e');
-      if (mounted) {
-        setState(() {
-          _error = 'Failed to initialize history service';
-          _isLoading = false;
-        });
-      }
-    }
+    _loadHistory();
   }
 
   Future<void> _loadHistory() async {
-    if (_historyService == null) return;
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
 
     try {
-      final history = await _historyService!.getHistory();
+      final history = await _historyService.getHistory();
       if (mounted) {
         setState(() {
           _history = history;
           _isLoading = false;
-          _error = null;
         });
       }
     } catch (e) {
       print('Error loading history: $e');
       if (mounted) {
         setState(() {
-          _error = 'Failed to load history';
+          _error = e.toString().replaceAll('Exception: ', '');
           _isLoading = false;
         });
       }
@@ -66,20 +48,25 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   Future<void> _clearHistory() async {
-    if (_historyService == null) return;
-
     try {
-      await _historyService!.clearHistory();
+      await _historyService.clearHistory();
       if (mounted) {
         setState(() {
           _history = [];
         });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('History cleared successfully')),
+        );
       }
     } catch (e) {
       print('Error clearing history: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to clear history')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to clear history: ${e.toString().replaceAll('Exception: ', '')}'),
+          ),
+        );
+      }
     }
   }
 
@@ -90,7 +77,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         title: const Text('Scan History'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go('/'),
+          onPressed: () => context.go('/home'),
         ),
         actions: [
           if (_history.isNotEmpty)
@@ -122,7 +109,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
             ),
         ],
       ),
-      body: _buildContent(),
+      body: RefreshIndicator(
+        onRefresh: _loadHistory,
+        child: _buildContent(),
+      ),
     );
   }
 
@@ -145,6 +135,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             Text(
               _error!,
               style: Theme.of(context).textTheme.titleMedium,
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
             ElevatedButton(
@@ -201,6 +192,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       width: 56,
                       height: 56,
                       fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const Icon(Icons.image_not_supported),
                     ),
                   )
                 : const Icon(Icons.image_not_supported),

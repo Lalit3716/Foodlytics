@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:foodlytics/features/product/domain/models/product.dart';
 import 'package:foodlytics/features/product/data/services/product_service.dart';
-import 'package:foodlytics/features/history/data/services/history_service.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class ProductDetailsScreen extends StatefulWidget {
   final String barcode;
@@ -19,55 +18,30 @@ class ProductDetailsScreen extends StatefulWidget {
 }
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
-  final _productService = ProductService();
+  final ProductService _productService = ProductService();
   Product? _product;
   bool _isLoading = true;
   String? _error;
-  HistoryService? _historyService;
 
   @override
   void initState() {
     super.initState();
-    _initializeAndLoadProduct();
-  }
-
-  Future<void> _initializeAndLoadProduct() async {
-    try {
-      final service = await HistoryService.getInstance();
-      if (mounted) {
-        setState(() {
-          _historyService = service;
-        });
-        await _loadProduct();
-      }
-    } catch (e) {
-      print('Error initializing history service: $e');
-      await _loadProduct(); // Still try to load product even if history fails
-    }
+    _loadProduct();
   }
 
   Future<void> _loadProduct() async {
-    try {
-      if (mounted) {
-        final cachedProduct =
-            await _historyService!.getProductFromHistory(widget.barcode);
-        if (cachedProduct != null) {
-          setState(() {
-            _product = cachedProduct;
-            _isLoading = false;
-          });
-          return;
-        }
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
 
-        final product = await _productService.getProduct(widget.barcode);
+    try {
+      final product = await _productService.getProduct(widget.barcode);
+      if (mounted) {
         setState(() {
           _product = product;
           _isLoading = false;
         });
-
-        if (product != null) {
-          await _historyService!.addToHistory(product);
-        }
       }
     } catch (e) {
       print('Error loading product: $e');
@@ -87,7 +61,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         title: const Text('Product Details'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.go('/'),
+          onPressed: () => context.go('/home'),
         ),
         elevation: 0,
         backgroundColor: Theme.of(context).colorScheme.background,
