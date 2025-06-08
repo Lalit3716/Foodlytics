@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'providers/auth_provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'features/home/presentation/screens/home_screen.dart';
+import 'features/scanner/presentation/screens/scanner_screen.dart';
+import 'features/history/presentation/screens/history_screen.dart';
+import 'features/profile/presentation/screens/profile_screen.dart';
+import 'features/product/presentation/screens/product_details_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,18 +23,83 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
       ],
-      child: MaterialApp(
-        title: 'Foodlytics',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          useMaterial3: true,
-        ),
-        initialRoute: '/',
-        routes: {
-          '/': (context) => const AuthWrapper(),
-          '/login': (context) => const LoginScreen(),
-          '/register': (context) => const RegisterScreen(),
-          '/home': (context) => const HomeScreen(),
+      child: Builder(
+        builder: (context) {
+          final authProvider = Provider.of<AuthProvider>(context);
+          
+          final router = GoRouter(
+            initialLocation: '/',
+            redirect: (context, state) {
+              final isAuthenticated = authProvider.isAuthenticated;
+              final isLoading = authProvider.isLoading;
+              
+              // Show loading screen while checking auth status
+              if (isLoading) return null;
+              
+              // Redirect to login if not authenticated and not already on auth screens
+              if (!isAuthenticated && 
+                  state.uri.path != '/login' && 
+                  state.uri.path != '/register') {
+                return '/login';
+              }
+              
+              // Redirect to home if authenticated and on auth screens
+              if (isAuthenticated && 
+                  (state.uri.path == '/login' || 
+                   state.uri.path == '/register' || 
+                   state.uri.path == '/')) {
+                return '/home';
+              }
+              
+              return null;
+            },
+            routes: [
+              GoRoute(
+                path: '/',
+                builder: (context, state) => const AuthWrapper(),
+              ),
+              GoRoute(
+                path: '/login',
+                builder: (context, state) => const LoginScreen(),
+              ),
+              GoRoute(
+                path: '/register',
+                builder: (context, state) => const RegisterScreen(),
+              ),
+              GoRoute(
+                path: '/home',
+                builder: (context, state) => const HomeScreen(),
+              ),
+              GoRoute(
+                path: '/scanner',
+                builder: (context, state) => const ScannerScreen(),
+              ),
+              GoRoute(
+                path: '/history',
+                builder: (context, state) => const HistoryScreen(),
+              ),
+              GoRoute(
+                path: '/profile',
+                builder: (context, state) => const ProfileScreen(),
+              ),
+              GoRoute(
+                path: '/product/:barcode',
+                builder: (context, state) {
+                  final barcode = state.pathParameters['barcode']!;
+                  return ProductDetailsScreen(barcode: barcode);
+                },
+              ),
+            ],
+          );
+
+          return MaterialApp.router(
+            title: 'Foodlytics',
+            theme: ThemeData(
+              primarySwatch: Colors.blue,
+              useMaterial3: true,
+            ),
+            routerConfig: router,
+          );
         },
       ),
     );
