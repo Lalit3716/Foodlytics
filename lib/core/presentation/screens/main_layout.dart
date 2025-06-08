@@ -35,19 +35,43 @@ class _MainLayoutState extends State<MainLayout> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomAppBar(
+      bottomNavigationBar: SizedBox(
         height: 60,
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 8,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            Expanded(child: _buildNavItem(0, Icons.home, 'Home')),
-            Expanded(child: _buildNavItem(1, Icons.leaderboard, 'Leaderboard')),
-            const Expanded(child: SizedBox()), // Space for FAB
-            Expanded(child: _buildNavItem(2, Icons.chat, 'Chat')),
-            Expanded(child: _buildNavItem(3, Icons.person, 'Profile')),
-          ],
+        child: BottomAppBar(
+          shape: const CircularNotchedRectangle(),
+          notchMargin: 8,
+          padding: EdgeInsets.zero,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final width = constraints.maxWidth;
+              final itemWidth = width / 5; // Divide width into 5 equal parts
+              
+              return Row(
+                children: [
+                  SizedBox(
+                    width: itemWidth,
+                    child: _buildNavItem(0, Icons.home, ''),
+                  ),
+                  SizedBox(
+                    width: itemWidth,
+                    child: _buildNavItem(1, Icons.leaderboard, ''),
+                  ),
+                  SizedBox(
+                    width: itemWidth,
+                    child: const SizedBox(), // Space for FAB
+                  ),
+                  SizedBox(
+                    width: itemWidth,
+                    child: _buildNavItem(2, Icons.chat, ''),
+                  ),
+                  SizedBox(
+                    width: itemWidth,
+                    child: _buildNavItem(3, Icons.person, ''),
+                  ),
+                ],
+              );
+            }
+          ),
         ),
       ),
     );
@@ -79,15 +103,16 @@ class _MainLayoutState extends State<MainLayout> {
           Icon(
             icon,
             color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
-            size: 24,
+            size: 22,
           ),
-          Text(
-            label,
-            style: TextStyle(
-              color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
-              fontSize: 11,
+          if (label.isNotEmpty)
+            Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
+                fontSize: 10,
+              ),
             ),
-          ),
         ],
       ),
     );
