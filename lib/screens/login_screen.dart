@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import '../providers/auth_provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -34,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
             _passwordController.text,
           );
       if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/');
+        context.go('/home');
       }
     } catch (e) {
       scaffoldMessenger.showSnackBar(
@@ -118,8 +119,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 16),
                   TextButton(
                     onPressed: () {
-                      // Navigate to register screen
-                      Navigator.pushNamed(context, '/register');
+                      context.go('/register');
                     },
                     child: const Text('Don\'t have an account? Register'),
                   ),

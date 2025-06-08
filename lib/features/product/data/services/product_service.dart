@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductService {
   final Dio _dio = Dio();
-  static const String _baseUrl = 'http://10.0.2.2:8000'; // Server endpoint
+  static const String _baseUrl = 'http://10.0.2.2:8000/api'; // Updated API endpoint
 
   Future<Product?> getProduct(String barcode) async {
     // Get the token from SharedPreferences
