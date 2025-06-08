@@ -38,6 +38,7 @@ class HistoryApiService {
 
       if (response.statusCode == 200) {
         final List<dynamic> historyData = response.data['history'];
+        debugPrint(historyData.toString());
         return historyData.map((json) => Product.fromJson(json)).toList();
       } else {
         throw Exception('Failed to load history');
@@ -69,7 +70,7 @@ class HistoryApiService {
           },
         ),
       );
-      
+
       if (response.statusCode != 200) {
         throw Exception('Failed to clear history');
       }
@@ -100,7 +101,7 @@ class HistoryApiService {
           },
         ),
       );
-      
+
       if (response.statusCode != 200) {
         throw Exception('Failed to delete history item');
       }
@@ -115,4 +116,4 @@ class HistoryApiService {
       throw Exception('Failed to delete history item: $e');
     }
   }
-} 
+}
