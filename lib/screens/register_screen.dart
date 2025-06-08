@@ -37,7 +37,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             _passwordController.text,
           );
       if (mounted) {
-        Navigator.pop(context);
+        Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
       }
     } catch (e) {
       debugPrint('Error caught: $e');

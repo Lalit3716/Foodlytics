@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
+import 'screens/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
           '/': (context) => const AuthWrapper(),
           '/login': (context) => const LoginScreen(),
           '/register': (context) => const RegisterScreen(),
+          '/home': (context) => const HomeScreen(),
         },
       ),
     );
@@ -53,12 +55,7 @@ class AuthWrapper extends StatelessWidget {
         }
 
         if (auth.isAuthenticated) {
-          // TODO: Navigate to home screen
-          return const Scaffold(
-            body: Center(
-              child: Text('Welcome to Foodlytics!'),
-            ),
-          );
+          return const HomeScreen();
         }
 
         return const LoginScreen();
