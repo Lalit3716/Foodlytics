@@ -1,52 +1,41 @@
 import 'dart:convert';
-import 'dart:math';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:foodlytics/features/product/domain/models/product.dart';
-
-// Hardcoded sample barcodes
-const sampleBarcodes = [
-  "3017620422003",
-  "5449000000996",
-  "7622210449283",
-  "5449000054227"
-];
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductService {
   final Dio _dio = Dio();
-  static const String _baseUrl = 'https://world.openfoodfacts.org/api/v2';
+  static const String _baseUrl = 'http://10.0.2.2:8000'; // Server endpoint
 
   Future<Product?> getProduct(String barcode) async {
-    // First try with the scanned barcode
-    try {
-      final response = await _dio.get('$_baseUrl/product/$barcode');
-
-      if (response.statusCode == 200 && response.data != null) {
-        final data = response.data as Map<String, dynamic>;
-        if (data['status'] == 1 && data['product'] != null) {
-          return Product.fromApiResponse(data);
-        }
-      }
-    } catch (e) {
-      print('Error fetching product with scanned barcode: $e');
+    // Get the token from SharedPreferences
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token');
+    
+    if (token == null) {
+      debugPrint('No token found, user must be logged in to fetch products');
+      return null;
     }
 
-    // If no product found with scanned barcode, use random sample for testing
-    final randomBarcode =
-        sampleBarcodes[Random().nextInt(sampleBarcodes.length)];
-    print('Using sample barcode for testing: $randomBarcode');
-
     try {
-      final response = await _dio.get('$_baseUrl/product/$randomBarcode');
+      // Call our server endpoint with authentication
+      final response = await _dio.get(
+        '$_baseUrl/product/$barcode',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
 
       if (response.statusCode == 200 && response.data != null) {
-        final data = response.data as Map<String, dynamic>;
-        if (data['status'] == 1 && data['product'] != null) {
-          return Product.fromApiResponse(data);
-        }
+        return Product.fromJson(response.data);
       }
       return null;
     } catch (e) {
-      print('Error fetching sample product: $e');
+      debugPrint('Error fetching product: $e');
       return null;
     }
   }
