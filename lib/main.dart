@@ -30,31 +30,31 @@ class MyApp extends StatelessWidget {
       child: Builder(
         builder: (context) {
           final authProvider = Provider.of<AuthProvider>(context);
-          
+
           final router = GoRouter(
             initialLocation: '/',
             redirect: (context, state) {
               final isAuthenticated = authProvider.isAuthenticated;
               final isLoading = authProvider.isLoading;
-              
+
               // Show loading screen while checking auth status
               if (isLoading) return null;
-              
+
               // Redirect to login if not authenticated and not already on auth screens
-              if (!isAuthenticated && 
-                  state.uri.path != '/login' && 
+              if (!isAuthenticated &&
+                  state.uri.path != '/login' &&
                   state.uri.path != '/register') {
                 return '/login';
               }
-              
+
               // Redirect to home if authenticated and on auth screens
-              if (isAuthenticated && 
-                  (state.uri.path == '/login' || 
-                   state.uri.path == '/register' || 
-                   state.uri.path == '/')) {
+              if (isAuthenticated &&
+                  (state.uri.path == '/login' ||
+                      state.uri.path == '/register' ||
+                      state.uri.path == '/')) {
                 return '/home';
               }
-              
+
               return null;
             },
             routes: [
@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
                 path: '/register',
                 builder: (context, state) => const RegisterScreen(),
               ),
-              
+
               // Main routes with bottom navigation
               GoRoute(
                 path: '/home',
@@ -99,7 +99,7 @@ class MyApp extends StatelessWidget {
                   ),
                 ),
               ),
-              
+
               GoRoute(
                 path: '/chatbot',
                 pageBuilder: (context, state) => NoTransitionPage(
@@ -109,7 +109,7 @@ class MyApp extends StatelessWidget {
                   ),
                 ),
               ),
-              
+
               // Other routes without bottom navigation
               GoRoute(
                 path: '/scanner',
@@ -135,6 +135,7 @@ class MyApp extends StatelessWidget {
 
           return MaterialApp.router(
             title: 'Foodlytics',
+            debugShowCheckedModeBanner: false,
             theme: ThemeData(
               primarySwatch: Colors.blue,
               useMaterial3: true,
