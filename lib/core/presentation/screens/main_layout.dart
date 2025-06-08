@@ -24,19 +24,24 @@ class _MainLayoutState extends State<MainLayout> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: widget.child,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          context.push('/scanner');
-        },
-        backgroundColor: Theme.of(context).primaryColor,
-        child: const Icon(
-          Icons.qr_code_scanner,
-          color: Colors.white,
+      floatingActionButton: SizedBox(
+        width: 56,
+        height: 56,
+        child: FloatingActionButton(
+          onPressed: () {
+            context.push('/scanner');
+          },
+          backgroundColor: Theme.of(context).primaryColor,
+          child: const Icon(
+            Icons.qr_code_scanner,
+            color: Colors.white,
+            size: 28,
+          ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: SizedBox(
-        height: 60,
+        height: 72,
         child: BottomAppBar(
           shape: const CircularNotchedRectangle(),
           notchMargin: 8,
@@ -50,11 +55,11 @@ class _MainLayoutState extends State<MainLayout> {
                 children: [
                   SizedBox(
                     width: itemWidth,
-                    child: _buildNavItem(0, Icons.home, ''),
+                    child: _buildNavItem(0, Icons.home, 'Home'),
                   ),
                   SizedBox(
                     width: itemWidth,
-                    child: _buildNavItem(1, Icons.leaderboard, ''),
+                    child: _buildNavItem(1, Icons.leaderboard, 'Board'),
                   ),
                   SizedBox(
                     width: itemWidth,
@@ -62,11 +67,11 @@ class _MainLayoutState extends State<MainLayout> {
                   ),
                   SizedBox(
                     width: itemWidth,
-                    child: _buildNavItem(2, Icons.chat, ''),
+                    child: _buildNavItem(2, Icons.chat, 'Chat'),
                   ),
                   SizedBox(
                     width: itemWidth,
-                    child: _buildNavItem(3, Icons.person, ''),
+                    child: _buildNavItem(3, Icons.person, 'Profile'),
                   ),
                 ],
               );
@@ -100,19 +105,28 @@ class _MainLayoutState extends State<MainLayout> {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            icon,
-            color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
-            size: 22,
-          ),
-          if (label.isNotEmpty)
-            Text(
-              label,
-              style: TextStyle(
+          SizedBox(
+            width: 32,
+            height: 32,
+            child: Center(
+              child: Icon(
+                icon,
                 color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
-                fontSize: 10,
+                size: 26,
               ),
             ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
+              fontSize: 10,
+              fontWeight: isSelected ? FontWeight.w500 : FontWeight.normal,
+            ),
+          ),
         ],
       ),
     );
