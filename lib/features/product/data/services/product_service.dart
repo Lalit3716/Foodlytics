@@ -6,13 +6,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ProductService {
   final Dio _dio = Dio();
-  static const String _baseUrl = 'http://10.0.2.2:8000/api'; // Updated API endpoint
+  static const String _baseUrl =
+      'https://foodlytics-backend-1.onrender.com/api'; // Updated API endpoint
 
   Future<Product?> getProduct(String barcode) async {
     // Get the token from SharedPreferences
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token');
-    
+
     if (token == null) {
       debugPrint('No token found, user must be logged in to fetch products');
       return null;

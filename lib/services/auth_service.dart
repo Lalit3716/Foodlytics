@@ -4,18 +4,18 @@ import 'package:http/http.dart' as http;
 import '../models/auth_models.dart';
 
 class AuthService {
-  static const String baseUrl = 'http://10.0.2.2:8000';
+  static const String baseUrl =
+      'https://foodlytics-backend-1.onrender.com/api/auth';
 
   Future<AuthResponse> login(String username, String password) async {
     debugPrint('Login request: $username, $password');
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/token'),
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: {
-          'username': username,
-          'password': password,
-        },
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(
+          LoginRequest(username: username, password: password).toJson(),
+        ),
       );
 
       if (response.statusCode == 200) {
@@ -41,7 +41,7 @@ class AuthService {
         ).toJson()),
       );
 
-      if (response.statusCode != 200) {
+      if (response.statusCode != 201) {
         throw Exception('Registration failed: ${response.body}');
       }
     } catch (e) {
