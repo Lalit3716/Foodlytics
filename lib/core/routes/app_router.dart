@@ -5,6 +5,7 @@ import 'package:foodlytics/features/profile/presentation/screens/profile_screen.
 import 'package:foodlytics/features/scanner/presentation/screens/scanner_screen.dart';
 import 'package:foodlytics/features/product/presentation/screens/product_details_screen.dart';
 import 'package:foodlytics/features/history/presentation/screens/history_screen.dart';
+import 'package:foodlytics/features/analytics/presentation/screens/analytics_dashboard_screen.dart';
 
 final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -27,6 +28,10 @@ final router = GoRouter(
     GoRoute(
       path: '/history',
       builder: (context, state) => const HistoryScreen(),
+    ),
+    GoRoute(
+      path: '/analytics',
+      builder: (context, state) => const AnalyticsDashboardScreen(),
     ),
     GoRoute(
       path: '/product/:barcode',
