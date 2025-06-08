@@ -9,6 +9,8 @@ import 'features/scanner/presentation/screens/scanner_screen.dart';
 import 'features/history/presentation/screens/history_screen.dart';
 import 'features/profile/presentation/screens/profile_screen.dart';
 import 'features/product/presentation/screens/product_details_screen.dart';
+import 'features/leaderboard/presentation/screens/leaderboard_screen.dart';
+import 'core/presentation/screens/main_layout.dart';
 
 void main() {
   runApp(const MyApp());
@@ -66,10 +68,37 @@ class MyApp extends StatelessWidget {
                 path: '/register',
                 builder: (context, state) => const RegisterScreen(),
               ),
+              
+              // Main routes with bottom navigation
               GoRoute(
                 path: '/home',
-                builder: (context, state) => const HomeScreen(),
+                pageBuilder: (context, state) => NoTransitionPage(
+                  child: MainLayout(
+                    currentIndex: 0,
+                    child: const HomeScreen(),
+                  ),
+                ),
               ),
+              GoRoute(
+                path: '/leaderboard',
+                pageBuilder: (context, state) => NoTransitionPage(
+                  child: MainLayout(
+                    currentIndex: 1,
+                    child: const LeaderboardScreen(),
+                  ),
+                ),
+              ),
+              GoRoute(
+                path: '/profile',
+                pageBuilder: (context, state) => NoTransitionPage(
+                  child: MainLayout(
+                    currentIndex: 2,
+                    child: const ProfileScreen(),
+                  ),
+                ),
+              ),
+              
+              // Other routes without bottom navigation
               GoRoute(
                 path: '/scanner',
                 builder: (context, state) => const ScannerScreen(),
@@ -77,10 +106,6 @@ class MyApp extends StatelessWidget {
               GoRoute(
                 path: '/history',
                 builder: (context, state) => const HistoryScreen(),
-              ),
-              GoRoute(
-                path: '/profile',
-                builder: (context, state) => const ProfileScreen(),
               ),
               GoRoute(
                 path: '/product/:barcode',
@@ -125,7 +150,10 @@ class AuthWrapper extends StatelessWidget {
         }
 
         if (auth.isAuthenticated) {
-          return const HomeScreen();
+          return MainLayout(
+            currentIndex: 0,
+            child: const HomeScreen(),
+          );
         }
 
         return const LoginScreen();
