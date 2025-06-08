@@ -31,6 +31,8 @@ class ProductService {
         ),
       );
 
+      debugPrint('Response: ${response.data}');
+
       if (response.statusCode == 200 && response.data != null) {
         return Product.fromJson(response.data);
       }
